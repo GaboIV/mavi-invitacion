@@ -424,6 +424,77 @@ body {
     color: #888 !important;
 }
 
+/* Dress Code Section */
+.dress-code-section {
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #fefefe 0%, #f8f8f8 100%);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.dress-code-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.dress-code-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(218, 165, 32, 0.1);
+    border: 2px solid rgba(218, 165, 32, 0.2);
+}
+
+.dress-code-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+.dress-code-message {
+    font-size: 1.2rem;
+    color: #666;
+    line-height: 1.7;
+    margin-bottom: 30px;
+}
+
+.green-reserved {
+    color: #228B22;
+    font-weight: 600;
+    background: linear-gradient(45deg, #90EE90, #32CD32);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dress-code-details {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.dress-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #f8f8f8, #ffffff);
+    border-radius: 15px;
+    border: 1px solid rgba(218, 165, 32, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.dress-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(218, 165, 32, 0.2);
+}
+
+.dress-icon {
+    font-size: 1.5rem;
+}
+
 /* Gift Section */
 .gift-section {
     padding: 60px 20px;
@@ -545,6 +616,23 @@ body {
     .magic-sparkles {
         gap: 20px;
     }
+    
+    .dress-code-details {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .dress-code-content {
+        padding: 25px 15px;
+    }
+    
+    .dress-code-message {
+        font-size: 1rem;
+    }
+    
+    .dress-item {
+        padding: 12px 15px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -552,6 +640,7 @@ body {
     .transition-section,
     .parents-section,
     .event-details,
+    .dress-code-section,
     .gift-section,
     .final-section {
         padding: 40px 15px;
@@ -652,6 +741,7 @@ body {
     .transition-section,
     .parents-section,
     .event-details,
+    .dress-code-section,
     .gift-section,
     .final-section {
         padding: 30px 20px;
