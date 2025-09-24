@@ -403,7 +403,13 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    min-width: 40px;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+.detail-content {
+    width: 100% !important;
+    text-align: center !important;
 }
 
 .detail-content h3 {
@@ -417,6 +423,8 @@ body {
     color: #666;
     font-size: 1.1rem;
     margin-bottom: 5px;
+    width: 100% !important;
+    text-align: center !important;
 }
 
 .address {
