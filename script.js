@@ -1,6 +1,18 @@
 // Enhanced interactivity for María's Quinceañera Invitation
 document.addEventListener('DOMContentLoaded', function() {
     
+    // Set background images from data-img attributes
+    const setBackgroundImages = () => {
+        const photoFrames = document.querySelectorAll('.photo-frame[data-img]');
+        photoFrames.forEach(frame => {
+            const imgPath = frame.getAttribute('data-img');
+            if (imgPath) {
+                const frameAfter = window.getComputedStyle(frame, '::after');
+                frame.style.setProperty('--bg-image', `url('${imgPath}')`);
+            }
+        });
+    };
+    
     // Add smooth scrolling behavior
     const smoothScroll = () => {
         document.documentElement.style.scrollBehavior = 'smooth';
@@ -214,30 +226,38 @@ document.addEventListener('DOMContentLoaded', function() {
         document.head.appendChild(style);
     };
     
-    // Add golden border animation to photos
-    const addPhotoBorderAnimation = () => {
-        const photoBorders = document.querySelectorAll('.photo-border');
+    // Add golden frame animation to photos
+    const addPhotoFrameAnimation = () => {
+        const photoFrames = document.querySelectorAll('.photo-frame');
         
-        photoBorders.forEach((border, index) => {
-            border.style.animationDelay = (index * 0.5) + 's';
+        photoFrames.forEach((frame, index) => {
+            // Stagger the animation start
+            frame.style.animationDelay = (index * 0.3) + 's';
             
-            // Add pulse effect on hover
-            const photoFrame = border.parentElement;
-            photoFrame.addEventListener('mouseenter', () => {
-                border.style.animation = 'goldShimmer 1s linear infinite, pulse 1s ease-in-out infinite';
+            // Add enhanced hover effects
+            frame.addEventListener('mouseenter', () => {
+                frame.style.animationDuration = '1s';
+                frame.style.transform = 'scale(1.08) rotate(1deg)';
             });
             
-            photoFrame.addEventListener('mouseleave', () => {
-                border.style.animation = 'goldShimmer 4s linear infinite';
+            frame.addEventListener('mouseleave', () => {
+                frame.style.animationDuration = '4s';
+                frame.style.transform = 'scale(1) rotate(0deg)';
             });
         });
         
-        // Add pulse animation
+        // Add enhanced pulse animation for frames
         const pulseStyle = document.createElement('style');
         pulseStyle.textContent = `
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.05); }
+            @keyframes enhancedPulse {
+                0%, 100% { 
+                    transform: scale(1) rotate(0deg);
+                    box-shadow: 0 20px 40px rgba(218, 165, 32, 0.3);
+                }
+                50% { 
+                    transform: scale(1.02) rotate(0.5deg);
+                    box-shadow: 0 25px 50px rgba(218, 165, 32, 0.4);
+                }
             }
         `;
         document.head.appendChild(pulseStyle);
@@ -266,6 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // Initialize all effects
+    setBackgroundImages();
     smoothScroll();
     createFloatingElements();
     addParallaxEffect();
@@ -274,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
     addScrollAnimations();
     addClickEffects();
     addMusicNotes();
-    addPhotoBorderAnimation();
+    addPhotoFrameAnimation();
     addCrownAnimation();
     
     // Add loading animation
