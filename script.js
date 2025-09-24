@@ -13,6 +13,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
     
+    // Ensure background image stays visible
+    const ensureBackgroundImage = () => {
+        // Preload the background image
+        const bgImage = new Image();
+        bgImage.src = 'assets/fondo.jpeg';
+        
+        // Set background on body as backup
+        document.body.style.backgroundImage = `url('assets/fondo.jpeg')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
+        document.body.style.backgroundRepeat = 'no-repeat';
+        
+        // Set background on html as backup
+        document.documentElement.style.backgroundImage = `url('assets/fondo.jpeg')`;
+        document.documentElement.style.backgroundSize = 'cover';
+        document.documentElement.style.backgroundPosition = 'center';
+        document.documentElement.style.backgroundAttachment = 'fixed';
+        document.documentElement.style.backgroundRepeat = 'no-repeat';
+    };
+    
     // Add smooth scrolling behavior
     const smoothScroll = () => {
         document.documentElement.style.scrollBehavior = 'smooth';
@@ -286,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // Initialize all effects
+    ensureBackgroundImage();
     setBackgroundImages();
     smoothScroll();
     createFloatingElements();
@@ -305,6 +327,11 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', () => {
         document.body.style.opacity = '1';
     });
+    
+    // Verificar periódicamente que la imagen de fondo se mantenga visible
+    setInterval(() => {
+        ensureBackgroundImage();
+    }, 2000);
     
     // Add touch support for mobile devices
     if ('ontouchstart' in window) {
