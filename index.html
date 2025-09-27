@@ -83,6 +83,42 @@
             <div class="photo-frame" data-img="assets/1.png"></div>
         </section>
 
+        <!-- Audio Player Section -->
+        <section class="audio-player-section">
+            <div class="audio-player-container">
+                <div class="audio-player">
+                    <div class="player-header">
+                        <div class="music-icon">🎵</div>
+                        <div class="player-title">Música de Fondo</div>
+                    </div>
+                    <div class="player-controls">
+                        <button class="control-btn" id="playPauseBtn">
+                            <span class="play-icon">▶️</span>
+                        </button>
+                        <button class="control-btn" id="muteBtn">
+                            <span class="mute-icon">🔊</span>
+                        </button>
+                        <button class="control-btn" id="restartBtn">
+                            <span class="restart-icon">⏮️</span>
+                        </button>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="time-display">
+                            <span id="currentTime">0:00</span>
+                            <span id="totalTime">0:00</span>
+                        </div>
+                    </div>
+                </div>
+                <audio id="backgroundMusic" loop>
+                    <source src="assets/music.m4a" type="audio/mp4">
+                    Tu navegador no soporta el elemento de audio.
+                </audio>
+            </div>
+        </section>
+
         <!-- Transition Message -->
         <section class="transition-section">
             <div class="message-container">

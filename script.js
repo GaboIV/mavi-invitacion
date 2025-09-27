@@ -365,10 +365,325 @@ document.addEventListener('DOMContentLoaded', function() {
     
     optimizeForVideo();
     window.addEventListener('resize', optimizeForVideo);
+    
+    // Initialize audio player
+    initializeAudioPlayer();
 });
+
+// Audio Player Functionality
+function initializeAudioPlayer() {
+    const audio = document.getElementById('backgroundMusic');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const muteBtn = document.getElementById('muteBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const currentTimeEl = document.getElementById('currentTime');
+    const totalTimeEl = document.getElementById('totalTime');
+    const playIcon = playPauseBtn.querySelector('.play-icon');
+    const muteIcon = muteBtn.querySelector('.mute-icon');
+    
+    // Load user preferences from localStorage
+    let isPlaying = localStorage.getItem('audioPlaying') !== 'false'; // Default to true
+    let isMuted = localStorage.getItem('audioMuted') === 'true'; // Default to false
+    let isDragging = false;
+    
+    // Format time helper function
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    // Update progress bar
+    function updateProgress() {
+        if (audio.duration && !isDragging) {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressFill.style.width = `${progress}%`;
+            currentTimeEl.textContent = formatTime(audio.currentTime);
+        }
+    }
+    
+    // Update total time when metadata is loaded
+    function updateTotalTime() {
+        if (audio.duration) {
+            totalTimeEl.textContent = formatTime(audio.duration);
+        }
+    }
+    
+    // Play/Pause functionality
+    function togglePlayPause() {
+        if (isPlaying) {
+            audio.pause();
+            playIcon.textContent = '▶️';
+            isPlaying = false;
+            // Save preference
+            localStorage.setItem('audioPlaying', 'false');
+        } else {
+            audio.play().catch(e => {
+                console.log('Audio play failed:', e);
+                // Show user-friendly message
+                showAudioMessage('Haz clic en el botón de play para reproducir la música');
+            });
+            playIcon.textContent = '⏸️';
+            isPlaying = true;
+            // Save preference
+            localStorage.setItem('audioPlaying', 'true');
+        }
+    }
+    
+    // Mute/Unmute functionality
+    function toggleMute() {
+        if (isMuted) {
+            audio.muted = false;
+            muteIcon.textContent = '🔊';
+            isMuted = false;
+            // Save preference
+            localStorage.setItem('audioMuted', 'false');
+        } else {
+            audio.muted = true;
+            muteIcon.textContent = '🔇';
+            isMuted = true;
+            // Save preference
+            localStorage.setItem('audioMuted', 'true');
+        }
+    }
+    
+    // Restart functionality
+    function restartAudio() {
+        audio.currentTime = 0;
+        if (isPlaying) {
+            audio.play();
+        }
+    }
+    
+    // Handle progress bar click
+    function handleProgressClick(e) {
+        if (audio.duration) {
+            const rect = progressBar.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = rect.width;
+            const clickTime = (clickX / width) * audio.duration;
+            audio.currentTime = clickTime;
+        }
+    }
+    
+    // Handle progress bar drag
+    function handleProgressDrag(e) {
+        if (audio.duration) {
+            const rect = progressBar.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = rect.width;
+            const clickTime = (clickX / width) * audio.duration;
+            audio.currentTime = clickTime;
+        }
+    }
+    
+    // Show audio message helper
+    function showAudioMessage(message) {
+        // Create temporary message element
+        const messageEl = document.createElement('div');
+        messageEl.textContent = message;
+        messageEl.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(218, 165, 32, 0.95);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            animation: fadeInOut 3s ease-in-out;
+        `;
+        
+        // Add fade animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+                20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        document.body.appendChild(messageEl);
+        
+        setTimeout(() => {
+            messageEl.remove();
+            style.remove();
+        }, 3000);
+    }
+    
+    // Event listeners
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    muteBtn.addEventListener('click', toggleMute);
+    restartBtn.addEventListener('click', restartAudio);
+    
+    // Progress bar interactions
+    progressBar.addEventListener('click', handleProgressClick);
+    
+    // Mouse drag on progress bar
+    progressBar.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        handleProgressDrag(e);
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            handleProgressDrag(e);
+        }
+    });
+    
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+    
+    // Touch support for mobile
+    progressBar.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        const touch = e.touches[0];
+        const rect = progressBar.getBoundingClientRect();
+        const clickX = touch.clientX - rect.left;
+        const width = rect.width;
+        const clickTime = (clickX / width) * audio.duration;
+        if (audio.duration) {
+            audio.currentTime = clickTime;
+        }
+    });
+    
+    document.addEventListener('touchend', () => {
+        isDragging = false;
+    });
+    
+    // Audio event listeners
+    audio.addEventListener('loadedmetadata', updateTotalTime);
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('ended', () => {
+        // Audio will loop automatically due to the loop attribute
+        playIcon.textContent = '▶️';
+        isPlaying = false;
+    });
+    
+    audio.addEventListener('play', () => {
+        playIcon.textContent = '⏸️';
+        isPlaying = true;
+    });
+    
+    audio.addEventListener('pause', () => {
+        playIcon.textContent = '▶️';
+        isPlaying = false;
+    });
+    
+    // Initialize player state based on saved preferences
+    function initializePlayerState() {
+        // Set initial mute state
+        audio.muted = isMuted;
+        muteIcon.textContent = isMuted ? '🔇' : '🔊';
+        
+        // Set initial play state
+        if (isPlaying) {
+            playIcon.textContent = '⏸️';
+            // Try to auto-play, but don't show error if it fails
+            audio.play().catch(() => {
+                // Auto-play was blocked, this is normal
+                console.log('Auto-play blocked by browser (normal behavior)');
+                // Update UI to show paused state
+                playIcon.textContent = '▶️';
+                isPlaying = false;
+                localStorage.setItem('audioPlaying', 'false');
+            });
+        } else {
+            playIcon.textContent = '▶️';
+        }
+    }
+    
+    // Auto-play attempt when audio is ready
+    audio.addEventListener('canplaythrough', initializePlayerState);
+    
+    // Handle audio loading errors
+    audio.addEventListener('error', (e) => {
+        console.error('Audio loading error:', e);
+        showAudioMessage('Error al cargar la música. Verifica que el archivo existe.');
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Only handle if audio player is visible
+        const audioSection = document.querySelector('.audio-player-section');
+        const rect = audioSection.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        
+        if (isVisible) {
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    togglePlayPause();
+                    break;
+                case 'KeyM':
+                    e.preventDefault();
+                    toggleMute();
+                    break;
+                case 'KeyR':
+                    e.preventDefault();
+                    restartAudio();
+                    break;
+            }
+        }
+    });
+    
+    // Add visual feedback for interactions
+    const controlBtns = document.querySelectorAll('.control-btn');
+    controlBtns.forEach(btn => {
+        btn.addEventListener('mousedown', () => {
+            btn.style.transform = 'scale(0.95)';
+        });
+        
+        btn.addEventListener('mouseup', () => {
+            btn.style.transform = '';
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+        });
+    });
+    
+    // Additional auto-play attempt after page load
+    window.addEventListener('load', () => {
+        // Small delay to ensure everything is loaded
+        setTimeout(() => {
+            if (isPlaying && audio.paused) {
+                audio.play().catch(() => {
+                    console.log('Auto-play blocked after page load (normal behavior)');
+                });
+            }
+        }, 1000);
+    });
+    
+    // Try auto-play on user interaction (required by some browsers)
+    const tryAutoPlay = () => {
+        if (isPlaying && audio.paused) {
+            audio.play().then(() => {
+                console.log('Audio started playing after user interaction');
+            }).catch(() => {
+                console.log('Auto-play still blocked');
+            });
+        }
+    };
+    
+    // Add click listener to document for auto-play
+    document.addEventListener('click', tryAutoPlay, { once: true });
+    document.addEventListener('touchstart', tryAutoPlay, { once: true });
+}
 
 // Add console message for developer
 console.log('✨ Invitación de Quinceañera - María Irigoyen ✨');
 console.log('🎭 Temática: La Princesa y el Sapo');
 console.log('👑 Diseño elegante con detalles dorados');
 console.log('📱 Optimizado para grabación de video 9:16');
+console.log('🎵 Reproductor de audio integrado');
